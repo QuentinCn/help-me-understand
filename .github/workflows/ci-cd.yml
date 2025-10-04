@@ -13,8 +13,8 @@ jobs:
         uses: docker/setup-buildx-action@v3
       - name: Build Docker images
         run: |
-          docker build -t pdf-qa-backend:latest ./backend --target prod
-          docker build -t pdf-qa-frontend:latest ./frontend
+          docker build -t help-me-understand-backend:latest ./backend --target prod
+          docker build -t help-me-understand-frontend:latest ./frontend
 
   test:
     runs-on: ubuntu-latest
@@ -31,16 +31,12 @@ jobs:
     needs: test
     steps:
       - uses: actions/checkout@v4
-      - name: Deploy to Prod
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.PROD_HOST }}
-          username: ${{ secrets.PROD_USER }}
-          key: ${{ secrets.PROD_SSH_KEY }}
-          passphrase: ${{ secrets.PROD_SSH_PASSPHRASE }}
-          script: |
-            cd ~/pdf-qa-ai
-            git pull origin main
-            docker compose -f docker-compose.prod.yml down
-            docker compose -f docker-compose.prod.yml pull
-            docker compose -f docker-compose.prod.yml up -d --build
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Deploy
+        run: |
+          cd backend
+          flyctl deploy --app help-me-understand-backend
+          cd ../frontend
+          flyctl deploy --app help-me-understand-front-end
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

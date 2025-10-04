@@ -1,0 +1,26 @@
+app = 'help-me-understand-front-end'
+primary_region = 'cdg'  # Changed to Paris
+
+[build]
+  dockerfile = 'Dockerfile'
+
+[http_service]
+  internal_port = 8501
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [[http_service.checks]]
+    path = '/'  # Check root path for Streamlit
+    protocol = 'http'
+    interval = '10s'
+    timeout = '5s'
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
+
+[env]
+  BACKEND_URL = 'https://help-me-understand-backend.fly.dev:8000'
