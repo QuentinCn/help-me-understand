@@ -1,0 +1,25 @@
+FROM python:3.10-slim
+
+WORKDIR /app
+# Install Supervisord
+RUN apt-get update && apt-get install -y python3-pip && \
+    pip install --no-cache-dir supervisor
+
+# Copy and install requirements for both services
+COPY backend/requirements.txt backend-requirements.txt
+COPY frontend/requirements.txt frontend-requirements.txt
+RUN pip install --no-cache-dir torch==2.4.1 --index-url https://download.pytorch.org/whl/cpu && \
+    pip install --no-cache-dir -r backend-requirements.txt && \
+    pip install --no-cache-dir -r frontend-requirements.txt
+
+# Copy application code
+COPY backend/app ./backend
+COPY frontend/app ./frontend
+
+# Supervisord config
+COPY supervisord.conf /etc/supervisord.conf
+
+# Expose ports for both services
+EXPOSE 8000 8501
+
+CMD ["supervisord", "-c", "/etc/supervisord.conf"]

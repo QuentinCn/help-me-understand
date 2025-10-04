@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 import torch
 import os
+import psycopg2
 
 app = FastAPI()
 
@@ -22,3 +23,15 @@ def hello_world():
 
     response["gpu_info"] = gpu_info
     return response
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+@app.get("/test-db")
+def test_db():
+    conn = psycopg2.connect(DATABASE_URL)
+    cur = conn.cursor()
+    cur.execute("SELECT 1")
+    result = cur.fetchone()
+    cur.close()
+    conn.close()
+    return {"result": result}
