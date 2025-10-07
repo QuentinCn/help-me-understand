@@ -35,3 +35,27 @@ def test_db():
     cur.close()
     conn.close()
     return {"result": result}
+
+@app.get("/add-qa")
+def add_qa():
+    conn = psycopg2.connect(DATABASE_URL)
+    cur = conn.cursor()
+
+    pdf_id = 'auui'
+    question = 'ijioj'
+    answer = 'ijioj'
+    feedback_score = True
+
+    cur.execute(
+        """
+        INSERT INTO qa_logs (pdf_id, question, answer, feedback_score)
+        VALUES (%s, %s, %s, %s)
+        RETURNING id, creation_time
+        """,
+        (pdf_id, question, answer, feedback_score)
+    )
+    result = cur.fetchone()
+    conn.commit()
+    cur.close()
+    conn.close()
+    return {"result": result}

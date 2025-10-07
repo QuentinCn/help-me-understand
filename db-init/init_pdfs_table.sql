@@ -1,0 +1,8 @@
+\connect appdb
+
+CREATE TABLE IF NOT EXISTS pdfs (
+    id SERIAL PRIMARY KEY UNIQUE,
+    filename VARCHAR NOT NULL UNIQUE,
+    creation_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    vector_id VARCHAR NOT NULL
+);

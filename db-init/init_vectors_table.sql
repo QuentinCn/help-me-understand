@@ -1,0 +1,9 @@
+\connect appdb
+
+CREATE EXTENSION IF NOT EXISTS vector;
+
+CREATE TABLE IF NOT EXISTS vectors (
+    id SERIAL PRIMARY KEY UNIQUE,
+    embedding VECTOR(768),
+    creation_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
